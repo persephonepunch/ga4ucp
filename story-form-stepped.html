@@ -30,21 +30,21 @@
 -->
 
 <style>
-/* ========== IBM PLEX FONT ========== */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+/* ========== FONT ========== */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
 
 /* ========== BASE STYLES ========== */
 #scfContainer {
-  background: #990000;
+  background: #750009;
   color: #fff;
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: 'RobotoPro', 'Roboto', sans-serif;
   padding: 2rem;
 }
 
 #scfContainer *,
 #scfContainer *::before,
 #scfContainer *::after {
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: 'RobotoPro', 'Roboto', sans-serif;
 }
 
 /* ========== STEP PROGRESS INDICATOR ========== */
@@ -57,8 +57,8 @@
 }
 
 .scf-step-indicator {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 0.6);
@@ -66,7 +66,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -79,18 +79,18 @@
 
 .scf-step-indicator.active {
   background: #fff;
-  color: #990000;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+  color: #750009;
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.3);
 }
 
 .scf-step-indicator.completed {
   background: #fff;
-  color: #990000;
+  color: #750009;
 }
 
 .scf-step-connector {
-  width: 60px;
-  height: 3px;
+  width: 3.75rem;
+  height: 0.1875rem;
   background: rgba(255, 255, 255, 0.2);
   transition: background 0.3s ease;
 }
@@ -104,8 +104,8 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  margin-top: 8px;
-  font-size: 11px;
+  margin-top: 0.5rem;
+  font-size: 0.6875rem;
   color: rgba(255, 255, 255, 0.6);
   white-space: nowrap;
   font-weight: 500;
@@ -127,7 +127,7 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(0.625rem); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -141,10 +141,10 @@
 }
 
 .scf-nav-btn {
-  padding: 12px 24px;
+  padding: 0.75rem 1.5rem;
   border-radius: 0;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
@@ -195,8 +195,8 @@
 /* ========== TYPE CARDS (Step 1) ========== */
 .scf-type-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(8.75rem, 1fr));
+  gap: 0.75rem;
   margin-bottom: 1rem;
 }
 
@@ -263,13 +263,19 @@
 .scf-textarea,
 .scf-select {
   width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #ccc;
+  height: 3.75rem;
+  padding: 0.75rem 0.875rem;
+  border: 0.0625rem solid #ccc;
   border-radius: 0;
   font-size: 0.9rem;
   transition: border-color 0.2s, box-shadow 0.2s;
   background: #fff;
   color: #000;
+  box-sizing: border-box;
+}
+
+.scf-textarea {
+  height: auto;
 }
 
 .scf-input::placeholder,
@@ -292,7 +298,7 @@
 }
 
 .scf-textarea {
-  min-height: 100px;
+  min-height: 6.25rem;
   resize: vertical;
 }
 
@@ -304,21 +310,21 @@
 .scf-tag-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
   list-style: none;
   padding: 0;
-  margin: 0 0 8px 0;
+  margin: 0 0 0.5rem 0;
 }
 
 .scf-tag-list li {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
   background: #000;
   color: #fff;
-  border-radius: 0;
+  border-radius: 3.125rem;
   font-size: 0.8rem;
   font-weight: 500;
 }
@@ -344,10 +350,10 @@
   left: 0;
   right: 0;
   background: #fff;
-  border: 1px solid #ccc;
+  border: 0.0625rem solid #ccc;
   border-radius: 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  max-height: 200px;
+  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.15);
+  max-height: 12.5rem;
   overflow-y: auto;
   z-index: 10;
   display: none;
@@ -358,7 +364,7 @@
 }
 
 .scf-tag-suggestion {
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   cursor: pointer;
   font-size: 0.9rem;
   color: #000;
@@ -381,18 +387,18 @@
 .scf-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  padding: 8px;
+  gap: 0.25rem;
+  padding: 0.5rem;
   background: #f5f5f5;
-  border: 1px solid #ccc;
+  border: 0.0625rem solid #ccc;
   border-bottom: none;
   border-radius: 0;
 }
 
 .scf-toolbar button {
-  padding: 8px 10px;
+  padding: 0.5rem 0.625rem;
   background: none;
-  border: 1px solid transparent;
+  border: 0.0625rem solid transparent;
   border-radius: 0;
   cursor: pointer;
   font-size: 0.85rem;
@@ -410,15 +416,15 @@
 }
 
 .scf-toolbar-divider {
-  width: 1px;
+  width: 0.0625rem;
   background: #ccc;
-  margin: 0 4px;
+  margin: 0 0.25rem;
 }
 
 .scf-editor {
-  min-height: 200px;
-  padding: 16px;
-  border: 1px solid #ccc;
+  min-height: 12.5rem;
+  padding: 1rem;
+  border: 0.0625rem solid #ccc;
   border-radius: 0;
   background: #fff;
   color: #000;
@@ -426,7 +432,7 @@
 
 .scf-editor .ProseMirror {
   outline: none;
-  min-height: 160px;
+  min-height: 10rem;
   color: #000;
 }
 
@@ -436,9 +442,17 @@
 
 .scf-editor .ProseMirror h1,
 .scf-editor .ProseMirror h2,
-.scf-editor .ProseMirror h3 {
+.scf-editor .ProseMirror h3,
+.scf-editor .ProseMirror h4,
+.scf-editor .ProseMirror h5 {
   margin: 1em 0 0.5em 0;
 }
+
+.scf-editor .ProseMirror h1 { font-size: 2rem; }
+.scf-editor .ProseMirror h2 { font-size: 1.5rem; }
+.scf-editor .ProseMirror h3 { font-size: 1.25rem; }
+.scf-editor .ProseMirror h4 { font-size: 1.125rem; }
+.scf-editor .ProseMirror h5 { font-size: 1rem; }
 
 .scf-editor .ProseMirror ul,
 .scf-editor .ProseMirror ol {
@@ -447,7 +461,7 @@
 }
 
 .scf-editor .ProseMirror blockquote {
-  border-left: 3px solid #990000;
+  border-left: 0.1875rem solid #750009;
   padding-left: 1em;
   margin: 1em 0;
   color: #666;
@@ -455,7 +469,7 @@
 
 /* ========== UPLOAD ZONES ========== */
 .scf-upload-zone {
-  border: 2px dashed #990000;
+  border: 0.125rem dashed #750009;
   border-radius: 0;
   padding: 3rem 2rem;
   text-align: center;
@@ -487,12 +501,12 @@
 }
 
 .scf-upload-text strong {
-  color: #990000;
+  color: #750009;
 }
 
 .scf-image-preview {
   max-width: 100%;
-  max-height: 300px;
+  max-height: 18.75rem;
   border-radius: 0;
   display: none;
 }
@@ -508,7 +522,7 @@
 
 .scf-upload-actions {
   display: none;
-  gap: 8px;
+  gap: 0.5rem;
   justify-content: center;
   margin-top: 0.75rem;
 }
@@ -518,7 +532,7 @@
 }
 
 .scf-upload-btn {
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   border-radius: 0;
   font-size: 0.8rem;
   font-weight: 500;
@@ -535,7 +549,7 @@
 
 .scf-upload-btn.danger {
   color: #fff;
-  background: #990000;
+  background: #750009;
 }
 
 .scf-upload-btn.danger:hover {
@@ -550,11 +564,11 @@
 }
 
 .scf-author-preview {
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #000;
+  border: 0.1875rem solid #000;
   display: none;
 }
 
@@ -563,8 +577,8 @@
 }
 
 .scf-author-placeholder {
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
   border-radius: 50%;
   background: #000;
   display: flex;
@@ -576,7 +590,7 @@
 
 /* ========== PROGRESS BAR ========== */
 .scf-progress {
-  height: 4px;
+  height: 0.25rem;
   background: rgba(0, 0, 0, 0.1);
   border-radius: 0;
   margin-top: 0.5rem;
@@ -615,16 +629,16 @@
 .scf-doc-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px;
+  gap: 0.75rem;
+  padding: 0.625rem;
   background: #fff;
   border-radius: 0;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 }
 
 .scf-doc-icon {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   background: #000;
   color: #fff;
   border-radius: 0;
@@ -656,11 +670,11 @@
   color: #999;
   font-size: 1.25rem;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 0.25rem 0.5rem;
 }
 
 .scf-doc-remove:hover {
-  color: #990000;
+  color: #750009;
 }
 
 /* ========== PREVIEW EMBEDS ========== */
@@ -669,8 +683,8 @@
   padding: 1rem;
   background: #fff;
   border-radius: 0;
-  border: 1px solid #ccc;
-  min-height: 60px;
+  border: 0.0625rem solid #ccc;
+  min-height: 3.75rem;
   color: #999;
   font-size: 0.9rem;
 }
@@ -685,8 +699,8 @@
 .scf-pay-row {
   display: grid;
   grid-template-columns: 1fr 1fr 1.5fr auto;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
   align-items: center;
 }
 
@@ -694,12 +708,12 @@
   font-weight: 600;
   font-size: 0.8rem;
   color: #fff;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .scf-pay-row input {
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 0.625rem;
+  border: 0.0625rem solid #ccc;
   border-radius: 0;
   font-size: 0.9rem;
   background: #fff;
@@ -718,7 +732,7 @@
   color: #fff;
   font-size: 1.25rem;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 0.25rem 0.5rem;
   opacity: 0.6;
 }
 
@@ -727,7 +741,7 @@
 }
 
 .scf-add-btn {
-  padding: 10px 16px;
+  padding: 0.625rem 1rem;
   background: #000;
   border: none;
   border-radius: 0;
@@ -745,14 +759,14 @@
 .scf-checkbox-wrap {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .scf-checkbox-wrap input[type="checkbox"] {
-  margin-top: 3px;
+  margin-top: 0.1875rem;
   accent-color: #fff;
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .scf-checkbox-wrap label {
@@ -768,7 +782,7 @@
 
 /* ========== MESSAGES ========== */
 .scf-message {
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   border-radius: 0;
   font-size: 0.9rem;
   margin-bottom: 1rem;
@@ -779,20 +793,20 @@
   display: block;
   background: rgba(255, 100, 100, 0.2);
   color: #ffcccc;
-  border: 1px solid rgba(255, 150, 150, 0.5);
+  border: 0.0625rem solid rgba(255, 150, 150, 0.5);
 }
 
 .scf-message.success {
   display: block;
   background: rgba(100, 255, 100, 0.2);
   color: #90ee90;
-  border: 1px solid rgba(150, 255, 150, 0.5);
+  border: 0.0625rem solid rgba(150, 255, 150, 0.5);
 }
 
 /* ========== SUBMIT BUTTON ========== */
 .scf-submit-btn {
   width: 100%;
-  padding: 14px 24px;
+  padding: 0.875rem 1.5rem;
   background: #000;
   color: #fff;
   border: none;
@@ -815,13 +829,13 @@
 /* ========== LOADING SPINNER ========== */
 .scf-loading {
   display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid #fff;
+  width: 1rem;
+  height: 1rem;
+  border: 0.125rem solid #fff;
   border-top-color: transparent;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
-  margin-right: 8px;
+  margin-right: 0.5rem;
   vertical-align: middle;
 }
 
@@ -832,13 +846,13 @@
 /* ========== VISIBILITY SELECT ========== */
 .scf-visibility-options {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .scf-visibility-option {
   flex: 1;
-  padding: 12px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 0.75rem;
+  border: 0.125rem solid rgba(255, 255, 255, 0.3);
   border-radius: 0;
   cursor: pointer;
   text-align: center;
@@ -872,7 +886,7 @@
 .scf-visibility-desc {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.6);
-  margin-top: 4px;
+  margin-top: 0.25rem;
 }
 
 .scf-visibility-option.active .scf-visibility-desc {
@@ -884,10 +898,10 @@
   display: none;
   padding: 2rem;
   text-align: center;
-  background: #990000;
+  background: #750009;
   border-radius: 0;
   color: #fff;
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: 'RobotoPro', 'Roboto', sans-serif;
 }
 
 /* ========== RESPONSIVE ========== */
@@ -897,13 +911,13 @@
   }
 
   .scf-step-connector {
-    width: 30px;
+    width: 1.875rem;
   }
 
   .scf-step-indicator {
-    width: 32px;
-    height: 32px;
-    font-size: 12px;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.75rem;
   }
 
   .scf-step-label {
@@ -1032,14 +1046,10 @@
       <div class="scf-tag-input-wrap">
         <input type="text" id="scfCategoryInput" class="scf-input" placeholder="Type to add a category">
         <div id="scfCategorySuggestions" class="scf-tag-suggestions">
-          <div class="scf-tag-suggestion" data-value="personal">Personal</div>
-          <div class="scf-tag-suggestion" data-value="academic">Academic</div>
-          <div class="scf-tag-suggestion" data-value="professional">Professional</div>
-          <div class="scf-tag-suggestion" data-value="creative">Creative</div>
-          <div class="scf-tag-suggestion" data-value="community">Community</div>
-          <div class="scf-tag-suggestion" data-value="sports">Sports</div>
-          <div class="scf-tag-suggestion" data-value="arts">Arts</div>
-          <div class="scf-tag-suggestion" data-value="technology">Technology</div>
+          <div class="scf-tag-suggestion" data-value="playlist">Playlist</div>
+          <div class="scf-tag-suggestion" data-value="research">Research</div>
+          <div class="scf-tag-suggestion" data-value="follow_list">Follow List</div>
+          <div class="scf-tag-suggestion" data-value="make_your_adventure">Make Your Adventure</div>
         </div>
       </div>
     </div>
@@ -1069,6 +1079,8 @@
           <button type="button" data-action="h1" title="Heading 1">H1</button>
           <button type="button" data-action="h2" title="Heading 2">H2</button>
           <button type="button" data-action="h3" title="Heading 3">H3</button>
+          <button type="button" data-action="h4" title="Heading 4">H4</button>
+          <button type="button" data-action="h5" title="Heading 5">H5</button>
           <div class="scf-toolbar-divider"></div>
           <button type="button" data-action="bulletList" title="Bullet List">List</button>
           <button type="button" data-action="orderedList" title="Numbered List">1.2.3</button>
@@ -1754,7 +1766,7 @@ function initEditor() {
   state.editor = new Editor({
     element: editorEl,
     extensions,
-    content: '<p>Write your story here...</p>',
+    content: '<h1>Heading 1 Example</h1><h2>Heading 2 Example</h2><h3>Heading 3 Example</h3><h4>Heading 4 Example</h4><h5>Heading 5 Example</h5><p>Write your story here...</p><blockquote>This is a blockquote example</blockquote><ul><li>Bullet list item 1</li><li>Bullet list item 2</li></ul><ol><li>Numbered list item 1</li><li>Numbered list item 2</li></ol>',
     editorProps: {
       attributes: {
         class: 'ProseMirror',
@@ -2024,7 +2036,6 @@ function submit() {
 
   let token = null;
   try { token = JSON.parse(localStorage.getItem('xano_auth_token')); } catch (e) {}
-  if (!token) { msg('error', 'Please log in to create a card'); if (btn) { btn.disabled = false; btn.textContent = 'Create Card'; } return; }
 
   const cardImages = state.imageData?.url ? [state.imageData.url] : [];
   const payload = {
