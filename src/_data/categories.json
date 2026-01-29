@@ -1,0 +1,27 @@
+[
+  {
+    "id": "html",
+    "label": "HTML",
+    "icon": "code"
+  },
+  {
+    "id": "javascript",
+    "label": "JavaScript",
+    "icon": "file-text"
+  },
+  {
+    "id": "css",
+    "label": "CSS",
+    "icon": "paint-bucket"
+  },
+  {
+    "id": "gtm",
+    "label": "GTM",
+    "icon": "tag"
+  },
+  {
+    "id": "integration",
+    "label": "Integration",
+    "icon": "link"
+  }
+]

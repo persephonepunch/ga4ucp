@@ -1,0 +1,491 @@
+---
+layout: base.njk
+title: Documentation
+description: Complete data flow and implementation architecture for GA4 + UCP integration
+---
+
+<div class="site-layout">
+  
+  <!-- Main Content (Full Width) -->
+  <main class="site-main" style="margin-left: 0;">
+    
+    <!-- Header -->
+    <header class="site-header">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <a href="/" class="btn">
+          <span uk-icon="icon: arrow-left"></span> Back to Code Reference
+        </a>
+        <div>
+          <h1 class="site-header__title" style="margin-bottom: 0.25rem;">Architecture Documentation</h1>
+          <p class="site-header__description" style="margin-bottom: 0;">
+            Complete data flow and implementation architecture
+          </p>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Content -->
+    <div class="site-content" style="max-width: 1400px; margin: 0 auto;">
+      
+      <!-- GA4 + UCP Data Flow -->
+      <section class="uk-margin-large-bottom">
+        <h2 class="uk-h2 uk-margin-bottom">GA4 + UCP Data Flow</h2>
+        <p class="uk-text-muted uk-margin-bottom">
+          This diagram illustrates the complete data flow from user interaction through Universal Commerce Protocol
+          to Google Analytics 4, showing how BEM naming conventions enable stable tracking.
+        </p>
+        <div class="code-block">
+          <div class="code-block__content" style="background: #f5f5f5;">
+            <pre style="color: #333; font-size: 0.75rem; line-height: 1.5;"><code>┌─────────────────────────────────────────────────────────────────┐
+│                  Universal Commerce Protocol (UCP)              │
+│                                                                 │
+│  • User Authentication (JWE/JWT Token)                          │
+│  • Session Management                                           │
+│  • Consent State Tracking                                       │
+│  • User Context & History                                       │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         │ Token & User Context
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│              Middleware Layer (Xano / n8n)                      │
+│                                                                 │
+│  • Validate UCP Token                                           │
+│  • Transform User Data                                          │
+│  • Enrich Event Context                                         │
+│  • Route to Analytics Endpoints                                 │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         │ Processed Event Data
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Frontend Application                         │
+│                                                                 │
+│  HTML with BEM Classes:                                         │
+│  &lt;button class="product-card__button"                           │
+│          data-action="add-to-cart"                              │
+│          data-item-id="prod-12345"                              │
+│          data-item-name="Product Name"                          │
+│          data-item-price="24.99"&gt;                               │
+│    Add to Cart                                                  │
+│  &lt;/button&gt;                                                      │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         │ User Interaction (Click Event)
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│              JavaScript Event Handler                           │
+│                                                                 │
+│  document.addEventListener('click', (e) =&gt; {                    │
+│    const btn = e.target.closest(                                │
+│      '.product-card__button[data-action="add-to-cart"]'         │
+│    );                                                           │
+│    if (btn) {                                                   │
+│      ga4Tracker.trackAddToCart(btn);                            │
+│    }                                                            │
+│  });                                                            │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         │ Extract Data from BEM Attributes
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│              GTM Data Layer Push                                │
+│                                                                 │
+│  window.dataLayer.push({                                        │
+│    event: 'add_to_cart',                                        │
+│    user_id: ucp.userId,                                         │
+│    ucp_token_hash: ucp.getHashedToken(),                        │
+│    ucp_session_id: ucp.sessionId,                               │
+│    element_class: 'product-card__button',                       │
+│    element_action: 'add-to-cart',                               │
+│    ecommerce: {                                                 │
+│      currency: 'USD',                                           │
+│      value: 24.99,                                              │
+│      items: [{                                                  │
+│        item_id: 'prod-12345',                                   │
+│        item_name: 'Product Name',                               │
+│        price: 24.99,                                            │
+│        quantity: 1                                              │
+│      }]                                                         │
+│    }                                                            │
+│  });                                                            │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         │ Trigger GTM Tags
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│           Google Tag Manager (GTM)                              │
+│                                                                 │
+│  Tag: GA4 - Add to Cart Event                                   │
+│  Trigger: Custom Event = 'add_to_cart'                          │
+│                                                                 │
+│  Event Parameters:                                              │
+│  • user_id: {{ '{{' }}DLV - user_id{{ '}}' }}                                   │
+│  • ucp_token_hash: {{ '{{' }}DLV - ucp_token_hash{{ '}}' }}                     │
+│  • ucp_session_id: {{ '{{' }}DLV - ucp_session_id{{ '}}' }}                     │
+│  • element_class: {{ '{{' }}Click Classes{{ '}}' }}                             │
+│  • ecommerce.items: {{ '{{' }}DLV - ecommerce.items{{ '}}' }}                   │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         │ Send Event to GA4
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│              Google Analytics 4 (GA4)                           │
+│                                                                 │
+│  Event: add_to_cart                                             │
+│  Parameters:                                                    │
+│  • user_id: "user_12345"                                        │
+│  • ucp_token_hash: "abc123..."                                  │
+│  • ucp_session_id: "sess_67890"                                 │
+│  • element_class: "product-card__button"                        │
+│  • items: [{ item_id, item_name, price, quantity }]             │
+│                                                                 │
+│  ✓ Event recorded in GA4 property                               │
+│  ✓ Available in reports and explorations                        │
+│  ✓ Can be used for audiences and conversions                    │
+└─────────────────────────────────────────────────────────────────┘
+
+Key Benefits of This Architecture:
+
+1. Stable Tracking: BEM class selectors never break with design changes
+2. UCP Integration: Secure user context flows through entire pipeline
+3. Semantic Structure: AI agents can parse and understand user actions
+4. Privacy-First: Token is hashed before sending to analytics
+5. Maintainable: Clear separation of concerns at each layer</code></pre>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Implementation Checklist -->
+      <section class="uk-margin-large-bottom">
+        <h2 class="uk-h2 uk-margin-bottom">Implementation Checklist</h2>
+        <div class="code-block">
+          <div class="code-block__content" style="background: white; padding: 2rem;">
+            <ul class="uk-list uk-list-large">
+              <li><label><input class="uk-checkbox" type="checkbox"> <strong>Set up UCP Integration:</strong> Configure Xano/n8n middleware for token management and session validation</label></li>
+              <li><label><input class="uk-checkbox" type="checkbox"> <strong>Implement BEM HTML Structure:</strong> Add semantic class names and data attributes to all trackable elements</label></li>
+              <li><label><input class="uk-checkbox" type="checkbox"> <strong>Create Event Tracking Classes:</strong> Implement UCPIntegration and GA4EventTracker JavaScript classes</label></li>
+              <li><label><input class="uk-checkbox" type="checkbox"> <strong>Set up Event Listeners:</strong> Use event delegation with BEM selectors for all user interactions</label></li>
+              <li><label><input class="uk-checkbox" type="checkbox"> <strong>Configure GTM Tags:</strong> Create GA4 event tags with proper data layer variables and triggers</label></li>
+              <li><label><input class="uk-checkbox" type="checkbox"> <strong>Test in GA4 DebugView:</strong> Verify all events fire correctly with proper parameters</label></li>
+              <li><label><input class="uk-checkbox" type="checkbox"> <strong>Validate UCP Backend:</strong> Confirm purchase data reaches UCP backend for AI agent tracking</label></li>
+              <li><label><input class="uk-checkbox" type="checkbox"> <strong>Cross-Browser Testing:</strong> Test tracking across Chrome, Firefox, Safari, and Edge</label></li>
+              <li><label><input class="uk-checkbox" type="checkbox"> <strong>Document Selectors:</strong> Create internal documentation of all BEM selectors used in GTM</label></li>
+              <li><label><input class="uk-checkbox" type="checkbox"> <strong>Monitor & Maintain:</strong> Set up alerts for tracking failures and regular audits</label></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Analysis and Summary -->
+      <section class="uk-margin-large-bottom">
+        <h2 class="uk-h2 uk-margin-bottom">Analysis and Summary</h2>
+        <p class="uk-text-muted uk-margin-bottom">
+          Live performance comparison between React + Tailwind CSS and 11ty + UIKit implementations,
+          demonstrating real-world performance differences.
+        </p>
+
+        <!-- Performance Metrics Comparison -->
+        <div class="uk-grid-small uk-child-width-1-2@m uk-margin-bottom" uk-grid>
+          <div>
+            <div class="uk-card uk-card-default uk-card-body" style="border-left: 4px solid #d32f2f;">
+              <h3 class="uk-card-title">React + Tailwind CSS</h3>
+              <ul class="uk-list">
+                <li><strong>Load Time:</strong> 1.22 seconds</li>
+                <li><strong>Bundle Size:</strong> 630 KB</li>
+                <li><strong>Resources:</strong> 15 HTTP requests</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="uk-card uk-card-default uk-card-body" style="border-left: 4px solid #4caf50;">
+              <h3 class="uk-card-title">11ty + UIKit</h3>
+              <ul class="uk-list">
+                <li><strong>Load Time:</strong> 0.67 seconds</li>
+                <li><strong>Bundle Size:</strong> 49 KB</li>
+                <li><strong>Resources:</strong> 5 HTTP requests</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance Improvements -->
+        <div class="code-block uk-margin-bottom">
+          <div class="code-block__header">
+            <span class="code-block__title">Performance Improvements</span>
+          </div>
+          <div class="code-block__content" style="background: #1a1a1a; padding: 1.5rem;">
+            <div class="uk-grid-small uk-child-width-1-4@m uk-text-center" uk-grid>
+              <div>
+                <div style="color: #4caf50; font-size: 2rem; font-weight: bold;">45%</div>
+                <div style="color: #999;">Faster Load Time</div>
+              </div>
+              <div>
+                <div style="color: #4caf50; font-size: 2rem; font-weight: bold;">92%</div>
+                <div style="color: #999;">Smaller Bundle</div>
+              </div>
+              <div>
+                <div style="color: #4caf50; font-size: 2rem; font-weight: bold;">67%</div>
+                <div style="color: #999;">Fewer Resources</div>
+              </div>
+              <div>
+                <div style="color: #4caf50; font-size: 2rem; font-weight: bold;">10x</div>
+                <div style="color: #999;">Lighter Payload</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Technical Details -->
+        <div class="uk-card uk-card-default uk-card-body uk-margin-bottom">
+          <h3 class="uk-card-title">Measurement Methodology</h3>
+          <p class="uk-text-muted">
+            The comparison uses vanilla JavaScript with the Performance API to measure load times accurately.
+            Each version loads in an isolated iframe to ensure fair comparison. Metrics tracked include:
+          </p>
+          <ul class="uk-list uk-list-bullet">
+            <li><strong>Load Time:</strong> Total time from iframe initialization to complete page load (green &lt; 1s, yellow 1-3s, red &gt; 3s)</li>
+            <li><strong>Bundle Size:</strong> Total transferred data including HTML, CSS, JavaScript, and assets (green &lt; 100KB, yellow 100-500KB, red &gt; 500KB)</li>
+            <li><strong>Resources:</strong> Number of HTTP requests during page load (green &lt; 10, yellow 10-20, red &gt; 20)</li>
+          </ul>
+        </div>
+
+        <!-- Key Findings -->
+        <div class="uk-card uk-card-default uk-card-body">
+          <h3 class="uk-card-title">Key Findings</h3>
+          <p>The 11ty + UIKit implementation demonstrates significant performance advantages:</p>
+          <ul class="uk-list uk-list-bullet">
+            <li><strong>Static Generation:</strong> Pre-rendered HTML eliminates client-side rendering overhead</li>
+            <li><strong>Minimal JavaScript:</strong> UIKit's modular approach loads only required components</li>
+            <li><strong>No Framework Runtime:</strong> No React or virtual DOM overhead in production</li>
+            <li><strong>Optimized Assets:</strong> CDN-delivered UIKit assets are highly cached</li>
+            <li><strong>Semantic HTML:</strong> BEM class selectors enable stable tracking without breaking with design changes</li>
+          </ul>
+          <p class="uk-margin-top uk-text-muted" style="font-style: italic;">
+            The live comparison effectively demonstrates the 45% load time improvement and 92% bundle size reduction,
+            validating the revenue analysis findings for 11ty + UIKit over React + Tailwind CSS.
+          </p>
+        </div>
+      </section>
+
+      <!-- Tag Event Label & Class ID Criteria -->
+      <section class="uk-margin-large-bottom">
+        <h2 class="uk-h2 uk-margin-bottom">Tag Event Label & Class ID Criteria</h2>
+        <p class="uk-text-muted uk-margin-bottom">
+          Standardized naming conventions for GTM tags and BEM class selectors to ensure consistent,
+          maintainable tracking across the application.
+        </p>
+
+        <!-- Event Label Naming Convention -->
+        <div class="code-block uk-margin-bottom">
+          <div class="code-block__header">
+            <span class="code-block__title">Event Label Naming Convention</span>
+          </div>
+          <div class="code-block__content">
+            <pre><code class="language-text">Format: [action]_[element]_[location]
+
+Examples:
+├── click_add-to-cart_product-card
+├── click_checkout_cart-summary
+├── submit_newsletter_footer
+├── view_product_collection-grid
+└── scroll_section_homepage-hero</code></pre>
+          </div>
+        </div>
+
+        <!-- Class ID Selector Criteria -->
+        <div class="uk-grid-small uk-child-width-1-2@m uk-margin-bottom" uk-grid>
+          <div>
+            <div class="uk-card uk-card-default uk-card-body">
+              <h3 class="uk-card-title">BEM Class Selectors</h3>
+              <table class="uk-table uk-table-small uk-table-divider">
+                <thead>
+                  <tr>
+                    <th>Pattern</th>
+                    <th>Usage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>.block__element</code></td>
+                    <td>Primary trackable elements</td>
+                  </tr>
+                  <tr>
+                    <td><code>.block__element--modifier</code></td>
+                    <td>State-specific tracking</td>
+                  </tr>
+                  <tr>
+                    <td><code>[data-action="value"]</code></td>
+                    <td>Action identification</td>
+                  </tr>
+                  <tr>
+                    <td><code>[data-item-id="value"]</code></td>
+                    <td>Product/item tracking</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="uk-card uk-card-default uk-card-body">
+              <h3 class="uk-card-title">GTM Trigger Selectors</h3>
+              <table class="uk-table uk-table-small uk-table-divider">
+                <thead>
+                  <tr>
+                    <th>Selector</th>
+                    <th>Event</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>.product-card__button</code></td>
+                    <td>add_to_cart</td>
+                  </tr>
+                  <tr>
+                    <td><code>.cart__checkout-btn</code></td>
+                    <td>begin_checkout</td>
+                  </tr>
+                  <tr>
+                    <td><code>.checkout__submit</code></td>
+                    <td>purchase</td>
+                  </tr>
+                  <tr>
+                    <td><code>.product-grid__item</code></td>
+                    <td>view_item_list</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Attribute Reference -->
+        <div class="code-block uk-margin-bottom">
+          <div class="code-block__header">
+            <span class="code-block__title">Required Data Attributes by Event Type</span>
+          </div>
+          <div class="code-block__content">
+            <pre><code class="language-html">&lt;!-- E-commerce Product Element --&gt;
+&lt;div class="product-card"
+     data-item-id="SKU-12345"
+     data-item-name="Product Name"
+     data-item-brand="Brand"
+     data-item-category="Category"
+     data-item-price="99.99"
+     data-item-currency="USD"&gt;
+
+  &lt;button class="product-card__button"
+          data-action="add-to-cart"
+          data-quantity="1"&gt;
+    Add to Cart
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- Purchase/Checkout Element --&gt;
+&lt;button class="checkout__submit"
+        data-action="purchase"
+        data-transaction-id="TXN-67890"
+        data-value="149.99"
+        data-tax="12.50"
+        data-shipping="5.99"
+        data-coupon="SAVE10"&gt;
+  Complete Purchase
+&lt;/button&gt;</code></pre>
+          </div>
+        </div>
+
+        <!-- Financial Conversion Tracking Matrix -->
+        <div class="uk-card uk-card-default uk-card-body">
+          <h3 class="uk-card-title">Financial Conversion Tracking Matrix</h3>
+          <div class="uk-overflow-auto">
+            <table class="uk-table uk-table-small uk-table-striped">
+              <thead>
+                <tr style="background: #333; color: #fff;">
+                  <th>Event</th>
+                  <th>Class Selector</th>
+                  <th>Data Attributes</th>
+                  <th>GA4 Parameter</th>
+                  <th>Revenue Impact</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>view_item</strong></td>
+                  <td><code>.product-card</code></td>
+                  <td>item_id, item_name, price</td>
+                  <td>items[]</td>
+                  <td>Awareness</td>
+                </tr>
+                <tr>
+                  <td><strong>add_to_cart</strong></td>
+                  <td><code>.product-card__button</code></td>
+                  <td>item_id, quantity, price</td>
+                  <td>items[], value</td>
+                  <td>Intent</td>
+                </tr>
+                <tr>
+                  <td><strong>begin_checkout</strong></td>
+                  <td><code>.cart__checkout-btn</code></td>
+                  <td>items[], coupon</td>
+                  <td>items[], value, coupon</td>
+                  <td>Commitment</td>
+                </tr>
+                <tr>
+                  <td><strong>add_payment_info</strong></td>
+                  <td><code>.checkout__payment</code></td>
+                  <td>payment_type</td>
+                  <td>payment_type, value</td>
+                  <td>High Intent</td>
+                </tr>
+                <tr style="background: #e8f5e9;">
+                  <td><strong>purchase</strong></td>
+                  <td><code>.checkout__submit</code></td>
+                  <td>transaction_id, value, tax, shipping</td>
+                  <td>transaction_id, value, items[]</td>
+                  <td><strong>Conversion</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="uk-margin-top uk-text-muted uk-text-small">
+            All selectors use BEM methodology for stability. Data attributes provide semantic context for AI agent parsing and UCP integration.
+          </p>
+        </div>
+      </section>
+
+      <!-- Key Resources -->
+      <section class="uk-margin-large-bottom">
+        <h2 class="uk-h2 uk-margin-bottom">Key Resources</h2>
+        <div class="uk-grid-small uk-child-width-1-2@m" uk-grid>
+          <div>
+            <a href="https://ucp.dev/" target="_blank" rel="noopener noreferrer" class="uk-card uk-card-default uk-card-body uk-card-hover" style="text-decoration: none; display: block;">
+              <h3 class="uk-card-title">Universal Commerce Protocol</h3>
+              <p class="uk-text-muted">Official UCP documentation and implementation guides</p>
+            </a>
+          </div>
+          <div>
+            <a href="https://getuikit.com/" target="_blank" rel="noopener noreferrer" class="uk-card uk-card-default uk-card-body uk-card-hover" style="text-decoration: none; display: block;">
+              <h3 class="uk-card-title">UIkit Framework</h3>
+              <p class="uk-text-muted">Lightweight and modular front-end framework</p>
+            </a>
+          </div>
+          <div>
+            <a href="https://developers.google.com/analytics/devguides/collection/ga4" target="_blank" rel="noopener noreferrer" class="uk-card uk-card-default uk-card-body uk-card-hover" style="text-decoration: none; display: block;">
+              <h3 class="uk-card-title">GA4 Developer Guide</h3>
+              <p class="uk-text-muted">Google Analytics 4 implementation documentation</p>
+            </a>
+          </div>
+          <div>
+            <a href="https://getbem.com/" target="_blank" rel="noopener noreferrer" class="uk-card uk-card-default uk-card-body uk-card-hover" style="text-decoration: none; display: block;">
+              <h3 class="uk-card-title">BEM Methodology</h3>
+              <p class="uk-text-muted">Block Element Modifier naming convention guide</p>
+            </a>
+          </div>
+        </div>
+      </section>
+      
+    </div>
+    
+  </main>
+  
+</div>

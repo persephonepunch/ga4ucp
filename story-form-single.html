@@ -1,0 +1,1769 @@
+<!--
+  ========================================================================
+  STORY FORM EMBED - SINGLE PAGE VERSION
+  Uses CSS from stepped form, JavaScript from original embed
+  ========================================================================
+-->
+
+<style>
+/* ========== FONT ========== */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
+
+/* ========== BASE STYLES ========== */
+#scfContainer {
+  background: #750009;
+  color: #fff;
+  font-family: 'RobotoPro', 'Roboto', sans-serif;
+  padding: 2rem;
+}
+
+#scfContainer *,
+#scfContainer *::before,
+#scfContainer *::after {
+  font-family: 'RobotoPro', 'Roboto', sans-serif;
+}
+
+/* ========== TYPE BUTTONS ========== */
+.scf-type-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.scf-type-btn {
+  padding: 0.625rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 0.125rem solid rgba(255, 255, 255, 0.3);
+  border-radius: 0;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.scf-type-btn:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.scf-type-btn.active {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+/* ========== SECTION DIVIDERS ========== */
+.scf-section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.2);
+}
+
+.scf-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.scf-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+/* ========== FORM FIELDS ========== */
+.scf-field-group {
+  margin-bottom: 1.25rem;
+}
+
+.scf-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.scf-label .optional {
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.scf-input,
+.scf-textarea,
+.scf-select {
+  width: 100%;
+  height: 3.75rem;
+  padding: 0.75rem 0.875rem;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+  color: #000;
+  box-sizing: border-box;
+}
+
+.scf-textarea {
+  height: auto;
+}
+
+.scf-input::placeholder,
+.scf-textarea::placeholder {
+  color: #999;
+}
+
+.scf-input:focus,
+.scf-textarea:focus,
+.scf-select:focus {
+  outline: none;
+  border-color: #000;
+  box-shadow: none;
+  background: #fff;
+}
+
+.scf-select option {
+  background: #fff;
+  color: #000;
+}
+
+.scf-textarea {
+  min-height: 6.25rem;
+  resize: vertical;
+}
+
+/* ========== CATEGORY TAGS ========== */
+.scf-tag-input-wrap {
+  position: relative;
+}
+
+.scf-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.5rem 0;
+}
+
+.scf-tag-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  background: #000;
+  color: #fff;
+  border-radius: 3.125rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.scf-tag-remove {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.8;
+  padding: 0;
+}
+
+.scf-tag-remove:hover {
+  opacity: 1;
+}
+
+.scf-tag-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0;
+  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.15);
+  max-height: 12.5rem;
+  overflow-y: auto;
+  z-index: 10;
+  display: none;
+}
+
+.scf-tag-suggestions.visible {
+  display: block;
+}
+
+.scf-tag-suggestion {
+  padding: 0.625rem 0.875rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #000;
+}
+
+.scf-tag-suggestion:hover {
+  background: #f5f5f5;
+}
+
+/* ========== TYPE-SPECIFIC PANELS ========== */
+.scf-panel {
+  display: none;
+}
+
+.scf-panel.active {
+  display: block;
+}
+
+/* ========== EDITOR TOOLBAR ========== */
+.scf-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background: #f5f5f5;
+  border: 0.0625rem solid #ccc;
+  border-bottom: none;
+  border-radius: 0;
+}
+
+.scf-toolbar button {
+  padding: 0.5rem 0.625rem;
+  background: none;
+  border: 0.0625rem solid transparent;
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #333;
+  transition: all 0.15s;
+}
+
+.scf-toolbar button:hover {
+  background: #e0e0e0;
+}
+
+.scf-toolbar button.is-active {
+  background: #000;
+  color: #fff;
+}
+
+.scf-toolbar-divider {
+  width: 0.0625rem;
+  background: #ccc;
+  margin: 0 0.25rem;
+}
+
+.scf-editor {
+  min-height: 12.5rem;
+  padding: 1rem;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0;
+  background: #fff;
+  color: #000;
+}
+
+.scf-editor .ProseMirror {
+  outline: none;
+  min-height: 10rem;
+  color: #000;
+}
+
+.scf-editor .ProseMirror p {
+  margin: 0 0 1em 0;
+}
+
+.scf-editor .ProseMirror h1,
+.scf-editor .ProseMirror h2,
+.scf-editor .ProseMirror h3 {
+  margin: 1em 0 0.5em 0;
+}
+
+.scf-editor .ProseMirror ul,
+.scf-editor .ProseMirror ol {
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+
+.scf-editor .ProseMirror blockquote {
+  border-left: 0.1875rem solid #750009;
+  padding-left: 1em;
+  margin: 1em 0;
+  color: #666;
+}
+
+/* ========== UPLOAD ZONES ========== */
+.scf-upload-zone {
+  border: 0.125rem dashed #750009;
+  border-radius: 0;
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fff;
+  position: relative;
+}
+
+.scf-upload-zone:hover,
+.scf-upload-zone.dragover {
+  border-color: #7a0000;
+  background: #fafafa;
+}
+
+.scf-upload-zone.has-image {
+  padding: 1rem;
+}
+
+.scf-upload-icon {
+  font-size: 2.5rem;
+  color: #999;
+  margin-bottom: 0.75rem;
+}
+
+.scf-upload-text {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.scf-upload-text strong {
+  color: #750009;
+}
+
+.scf-image-preview {
+  max-width: 100%;
+  max-height: 18.75rem;
+  border-radius: 0;
+  display: none;
+}
+
+.scf-upload-zone.has-image .scf-image-preview {
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.scf-upload-zone.has-image .scf-upload-placeholder {
+  display: none;
+}
+
+.scf-upload-actions {
+  display: none;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
+.scf-upload-zone.has-image .scf-upload-actions {
+  display: flex;
+}
+
+.scf-upload-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: #000;
+  color: #fff;
+  transition: all 0.15s;
+}
+
+.scf-upload-btn:hover {
+  background: #333;
+}
+
+.scf-upload-btn.danger {
+  color: #fff;
+  background: #750009;
+}
+
+.scf-upload-btn.danger:hover {
+  background: #7a0000;
+}
+
+/* ========== AUTHOR PHOTO ========== */
+.scf-author-upload {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.scf-author-preview {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 0.1875rem solid #000;
+  display: none;
+}
+
+.scf-author-preview.visible {
+  display: block;
+}
+
+.scf-author-placeholder {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 2rem;
+}
+
+/* ========== PROGRESS BAR ========== */
+.scf-progress {
+  height: 0.25rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 0;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  display: none;
+}
+
+.scf-progress.visible {
+  display: block;
+}
+
+.scf-progress-bar {
+  height: 100%;
+  background: #000;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+/* ========== COMPRESS INFO ========== */
+.scf-compress-info {
+  font-size: 0.8rem;
+  color: #90ee90;
+  margin-top: 0.5rem;
+  display: none;
+}
+
+.scf-compress-info.visible {
+  display: block;
+}
+
+/* ========== DOCUMENT LIST ========== */
+.scf-doc-list {
+  margin-top: 1rem;
+}
+
+.scf-doc-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem;
+  background: #fff;
+  border-radius: 0;
+  margin-bottom: 0.5rem;
+}
+
+.scf-doc-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #000;
+  color: #fff;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.scf-doc-info {
+  flex: 1;
+}
+
+.scf-doc-name {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #000;
+}
+
+.scf-doc-size {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.scf-doc-remove {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+.scf-doc-remove:hover {
+  color: #750009;
+}
+
+/* ========== PREVIEW EMBEDS ========== */
+.scf-preview {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 0;
+  border: 0.0625rem solid #ccc;
+  min-height: 3.75rem;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+/* ========== PAYMENT METHODS (Crowdfund) ========== */
+.scf-payment-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+/* ========== TUITION SCHEDULE ========== */
+.scf-pay-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr auto;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+
+.scf-pay-row.header {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #fff;
+  margin-bottom: 0.75rem;
+}
+
+.scf-pay-row input {
+  padding: 0.625rem;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0;
+  font-size: 0.9rem;
+  background: #fff;
+  color: #000;
+}
+
+.scf-pay-row input:focus {
+  outline: none;
+  border-color: #000;
+  background: #fff;
+}
+
+.scf-remove-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  opacity: 0.6;
+}
+
+.scf-remove-btn:hover {
+  opacity: 1;
+}
+
+.scf-add-btn {
+  padding: 0.625rem 1rem;
+  background: #000;
+  border: none;
+  border-radius: 0;
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.scf-add-btn:hover {
+  background: #333;
+}
+
+/* ========== CHECKBOX ========== */
+.scf-checkbox-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+}
+
+.scf-checkbox-wrap input[type="checkbox"] {
+  margin-top: 0.1875rem;
+  accent-color: #fff;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.scf-checkbox-wrap label {
+  font-size: 0.9rem;
+  color: #fff;
+  line-height: 1.5;
+}
+
+.scf-checkbox-wrap label a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* ========== MESSAGES ========== */
+.scf-message {
+  padding: 0.75rem 1rem;
+  border-radius: 0;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  display: none;
+}
+
+.scf-message.error {
+  display: block;
+  background: rgba(255, 100, 100, 0.2);
+  color: #ffcccc;
+  border: 0.0625rem solid rgba(255, 150, 150, 0.5);
+}
+
+.scf-message.success {
+  display: block;
+  background: rgba(100, 255, 100, 0.2);
+  color: #90ee90;
+  border: 0.0625rem solid rgba(150, 255, 150, 0.5);
+}
+
+/* ========== SUBMIT BUTTON ========== */
+.scf-submit-btn {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.scf-submit-btn:hover {
+  background: #333;
+}
+
+.scf-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========== LOADING SPINNER ========== */
+.scf-loading {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 0.125rem solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========== VISIBILITY SELECT ========== */
+.scf-visibility-options {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.scf-visibility-option {
+  flex: 1;
+  padding: 0.75rem;
+  border: 0.125rem solid rgba(255, 255, 255, 0.3);
+  border-radius: 0;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.scf-visibility-option:hover {
+  border-color: #fff;
+}
+
+.scf-visibility-option.active {
+  border-color: #000;
+  background: #fff;
+}
+
+.scf-visibility-option input {
+  display: none;
+}
+
+.scf-visibility-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.scf-visibility-option.active .scf-visibility-label {
+  color: #000;
+}
+
+.scf-visibility-desc {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 0.25rem;
+}
+
+.scf-visibility-option.active .scf-visibility-desc {
+  color: #666;
+}
+
+/* ========== BLOCKED MESSAGE ========== */
+#scfBlocked {
+  display: none;
+  padding: 2rem;
+  text-align: center;
+  background: #750009;
+  border-radius: 0;
+  color: #fff;
+  font-family: 'RobotoPro', 'Roboto', sans-serif;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 640px) {
+  .scf-type-buttons {
+    flex-direction: column;
+  }
+
+  .scf-pay-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .scf-pay-row .pay-label {
+    grid-column: span 2;
+  }
+
+  .scf-visibility-options {
+    flex-direction: column;
+  }
+}
+</style>
+
+<!-- ========== BLOCKED MESSAGE ========== -->
+<div id="scfBlocked">
+  <strong>Form Unavailable</strong>
+  <p>This form is not available on this domain.</p>
+</div>
+
+<!-- ========== MAIN CONTAINER ========== -->
+<div id="scfContainer" style="display: none;">
+
+  <!-- ========== MESSAGE AREA ========== -->
+  <div id="scfMessage" class="scf-message"></div>
+
+  <!-- ========== TYPE SELECTION ========== -->
+  <div class="scf-section">
+    <div class="scf-section-title">Card Type</div>
+    <div class="scf-type-buttons">
+      <button type="button" class="scf-type-btn active" data-type="story">Story</button>
+      <button type="button" class="scf-type-btn" data-type="music_playlist">Music Playlist</button>
+      <button type="button" class="scf-type-btn" data-type="youtube_video">YouTube Video</button>
+      <button type="button" class="scf-type-btn" data-type="ticket_purchase">Event Ticket</button>
+      <button type="button" class="scf-type-btn" data-type="crowdfund">Crowdfund</button>
+      <button type="button" class="scf-type-btn" data-type="tuition">Tuition</button>
+      <button type="button" class="scf-type-btn" data-type="threaded_comment">Discussion</button>
+    </div>
+  </div>
+
+  <!-- ========== BASIC INFO ========== -->
+  <div class="scf-section">
+    <div class="scf-section-title">Basic Information</div>
+
+    <div class="scf-field-group">
+      <label class="scf-label" for="scfTitle">Card Title</label>
+      <input type="text" id="scfTitle" class="scf-input" placeholder="Give your card a title" maxlength="100">
+    </div>
+
+    <div class="scf-field-group">
+      <label class="scf-label" for="scfDescription">Description <span class="optional">(optional)</span></label>
+      <textarea id="scfDescription" class="scf-textarea" placeholder="Brief description of your card" maxlength="500"></textarea>
+    </div>
+
+    <div class="scf-field-group">
+      <label class="scf-label">Categories <span class="optional">(optional)</span></label>
+      <ul id="scfCategoryList" class="scf-tag-list"></ul>
+      <div class="scf-tag-input-wrap">
+        <input type="text" id="scfCategoryInput" class="scf-input" placeholder="Type to add a category">
+        <div id="scfCategorySuggestions" class="scf-tag-suggestions">
+          <div class="scf-tag-suggestion" data-value="playlist">Playlist</div>
+          <div class="scf-tag-suggestion" data-value="research">Research</div>
+          <div class="scf-tag-suggestion" data-value="follow_list">Follow List</div>
+          <div class="scf-tag-suggestion" data-value="make_your_adventure">Make Your Adventure</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== TYPE-SPECIFIC CONTENT ========== -->
+  <div class="scf-section">
+    <div class="scf-section-title">Content</div>
+
+    <!-- Story Panel -->
+    <div id="panel-story" class="scf-panel active">
+      <div class="scf-field-group">
+        <label class="scf-label">Story Content</label>
+        <div id="scfToolbar" class="scf-toolbar">
+          <button type="button" data-action="bold" title="Bold"><strong>B</strong></button>
+          <button type="button" data-action="italic" title="Italic"><em>I</em></button>
+          <button type="button" data-action="underline" title="Underline"><u>U</u></button>
+          <button type="button" data-action="strike" title="Strikethrough"><s>S</s></button>
+          <div class="scf-toolbar-divider"></div>
+          <button type="button" data-action="h1" title="Heading 1">H1</button>
+          <button type="button" data-action="h2" title="Heading 2">H2</button>
+          <button type="button" data-action="h3" title="Heading 3">H3</button>
+          <div class="scf-toolbar-divider"></div>
+          <button type="button" data-action="bulletList" title="Bullet List">List</button>
+          <button type="button" data-action="orderedList" title="Numbered List">1.2.3</button>
+          <button type="button" data-action="blockquote" title="Quote">Quote</button>
+          <div class="scf-toolbar-divider"></div>
+          <button type="button" data-action="link" title="Insert Link">Link</button>
+          <button type="button" data-action="image" title="Insert Image">Image</button>
+        </div>
+        <div id="scfEditor" class="scf-editor"></div>
+      </div>
+      <input type="hidden" id="body_html" name="body_html">
+      <input type="hidden" id="body_text" name="body_text">
+    </div>
+
+    <!-- Music Panel -->
+    <div id="panel-music_playlist" class="scf-panel">
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfMusicPlatform">Platform</label>
+        <select id="scfMusicPlatform" class="scf-select">
+          <option value="spotify">Spotify</option>
+          <option value="soundcloud">SoundCloud</option>
+          <option value="apple_music">Apple Music</option>
+        </select>
+      </div>
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfMusicUrl">Music URL</label>
+        <input type="url" id="scfMusicUrl" class="scf-input" placeholder="https://open.spotify.com/track/...">
+      </div>
+      <div id="scfMusicPreview" class="scf-preview">Paste a music URL to see preview</div>
+    </div>
+
+    <!-- YouTube Panel -->
+    <div id="panel-youtube_video" class="scf-panel">
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfYoutubeUrl">YouTube URL</label>
+        <input type="url" id="scfYoutubeUrl" class="scf-input" placeholder="https://www.youtube.com/watch?v=...">
+      </div>
+      <div id="scfYoutubePreview" class="scf-preview">Paste a YouTube URL to see preview</div>
+      <div class="scf-field-group" style="margin-top: 1rem;">
+        <label class="scf-label" for="scfYoutubeCaption">Caption <span class="optional">(optional)</span></label>
+        <textarea id="scfYoutubeCaption" class="scf-textarea" placeholder="Add a caption for this video" maxlength="280"></textarea>
+      </div>
+    </div>
+
+    <!-- Ticket Panel -->
+    <div id="panel-ticket_purchase" class="scf-panel">
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfEventName">Event Name</label>
+        <input type="text" id="scfEventName" class="scf-input" placeholder="Concert, Game, Show...">
+      </div>
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfEventDate">Event Date</label>
+        <input type="date" id="scfEventDate" class="scf-input">
+      </div>
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfEventVenue">Venue <span class="optional">(optional)</span></label>
+        <input type="text" id="scfEventVenue" class="scf-input" placeholder="Venue name and location">
+      </div>
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfTicketUrl">Ticket Link <span class="optional">(optional)</span></label>
+        <input type="url" id="scfTicketUrl" class="scf-input" placeholder="https://...">
+      </div>
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfPriceRange">Price Range <span class="optional">(optional)</span></label>
+        <input type="text" id="scfPriceRange" class="scf-input" placeholder="$25 - $75">
+      </div>
+    </div>
+
+    <!-- Crowdfund Panel -->
+    <div id="panel-crowdfund" class="scf-panel">
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfGoalAmount">Funding Goal ($)</label>
+        <input type="number" id="scfGoalAmount" class="scf-input" placeholder="1000" min="1">
+      </div>
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfCtaText">Button Text <span class="optional">(optional)</span></label>
+        <input type="text" id="scfCtaText" class="scf-input" placeholder="Support Now" maxlength="30">
+      </div>
+      <div class="scf-field-group">
+        <label class="scf-label">Payment Methods</label>
+        <p style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 1rem;">Add at least one payment method</p>
+        <div class="scf-field-group">
+          <label class="scf-label" for="scfVenmoUsername">Venmo Username</label>
+          <input type="text" id="scfVenmoUsername" class="scf-input" placeholder="@username">
+        </div>
+        <div class="scf-field-group">
+          <label class="scf-label" for="scfPaypalEmail">PayPal Email</label>
+          <input type="email" id="scfPaypalEmail" class="scf-input" placeholder="email@example.com">
+        </div>
+        <div class="scf-field-group">
+          <label class="scf-label" for="scfStripeLink">Stripe Payment Link</label>
+          <input type="url" id="scfStripeLink" class="scf-input" placeholder="https://buy.stripe.com/...">
+        </div>
+      </div>
+      <div class="scf-checkbox-wrap">
+        <input type="checkbox" id="scfAllowCustom">
+        <label for="scfAllowCustom">Allow custom donation amounts</label>
+      </div>
+    </div>
+
+    <!-- Tuition Panel -->
+    <div id="panel-tuition" class="scf-panel">
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfInstitution">Institution</label>
+        <input type="text" id="scfInstitution" class="scf-input" placeholder="University or school name">
+      </div>
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfSemester">Semester/Term</label>
+        <input type="text" id="scfSemester" class="scf-input" placeholder="Fall 2025">
+      </div>
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfTuitionTotal">Total Amount ($)</label>
+        <input type="number" id="scfTuitionTotal" class="scf-input" placeholder="15000" min="0">
+      </div>
+      <div class="scf-field-group">
+        <label class="scf-label">Payment Schedule <span class="optional">(optional)</span></label>
+        <div class="scf-pay-row header">
+          <span>Date</span>
+          <span>Amount</span>
+          <span>Label</span>
+          <span></span>
+        </div>
+        <div id="scfPayments">
+          <div class="scf-pay-row" data-idx="0">
+            <input type="date" class="pay-date">
+            <input type="number" class="pay-amount" placeholder="5000" min="0">
+            <input type="text" class="pay-label" placeholder="Payment 1">
+            <button type="button" class="scf-remove-btn" onclick="SCF.removePay(0)">x</button>
+          </div>
+        </div>
+        <button type="button" class="scf-add-btn" onclick="SCF.addPay()">+ Add Payment</button>
+      </div>
+    </div>
+
+    <!-- Threaded Comment Panel -->
+    <div id="panel-threaded_comment" class="scf-panel">
+      <div class="scf-field-group">
+        <label class="scf-label" for="scfCommentTopic">Topic or Question</label>
+        <textarea id="scfCommentTopic" class="scf-textarea" placeholder="What would you like to discuss?" maxlength="500"></textarea>
+      </div>
+      <div class="scf-checkbox-wrap">
+        <input type="checkbox" id="scfAllowReplies" checked>
+        <label for="scfAllowReplies">Allow replies to this discussion</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MEDIA ========== -->
+  <div class="scf-section">
+    <div class="scf-section-title">Media</div>
+
+    <!-- Featured Image Upload -->
+    <div class="scf-field-group">
+      <label class="scf-label">Featured Image <span class="optional">(optional)</span></label>
+      <div id="scfUploadZone" class="scf-upload-zone">
+        <div class="scf-upload-placeholder">
+          <div class="scf-upload-icon">Upload</div>
+          <p class="scf-upload-text"><strong>Click to upload</strong> or drag and drop</p>
+          <p class="scf-upload-text">PNG, JPG up to 10MB</p>
+        </div>
+        <img id="scfImagePreview" class="scf-image-preview" src="" alt="Preview">
+        <div class="scf-upload-actions">
+          <button type="button" class="scf-upload-btn" onclick="SCF.changeImage()">Change</button>
+          <button type="button" class="scf-upload-btn danger" onclick="SCF.removeImage()">Remove</button>
+        </div>
+      </div>
+      <input type="file" id="scfFileInput" accept="image/*" style="display: none;">
+      <div id="scfProgress" class="scf-progress">
+        <div id="scfProgressBar" class="scf-progress-bar"></div>
+      </div>
+      <div id="scfCompressInfo" class="scf-compress-info"></div>
+
+      <div id="scfUrlInput" style="margin-top: 1rem;">
+        <label class="scf-label" for="scfImageUrl">Or enter image URL</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="url" id="scfImageUrl" class="scf-input" placeholder="https://...">
+          <button type="button" class="scf-upload-btn" onclick="SCF.previewUrl()">Load</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Author Photo -->
+    <div class="scf-field-group" style="margin-top: 2rem;">
+      <label class="scf-label">Author Photo <span class="optional">(optional)</span></label>
+      <div class="scf-author-upload">
+        <img id="scfAuthorPreview" class="scf-author-preview" src="" alt="Author">
+        <div class="scf-author-placeholder" id="scfAuthorPlaceholder">?</div>
+        <div>
+          <button type="button" class="scf-upload-btn" onclick="SCF.uploadAuthorPhoto()">Upload Photo</button>
+          <p style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem;">Square image recommended</p>
+        </div>
+      </div>
+      <input type="file" id="scfAuthorInput" accept="image/*" style="display: none;">
+    </div>
+  </div>
+
+  <!-- ========== SETTINGS & SUBMIT ========== -->
+  <div class="scf-section">
+    <div class="scf-section-title">Settings</div>
+
+    <!-- Visibility -->
+    <div class="scf-field-group">
+      <label class="scf-label">Visibility</label>
+      <div class="scf-visibility-options">
+        <label class="scf-visibility-option active" onclick="SCF.setVisibility('public', this)">
+          <input type="radio" name="visibility" value="public" checked>
+          <div class="scf-visibility-label">Public</div>
+          <div class="scf-visibility-desc">Anyone can view this card</div>
+        </label>
+        <label class="scf-visibility-option" onclick="SCF.setVisibility('private', this)">
+          <input type="radio" name="visibility" value="private">
+          <div class="scf-visibility-label">Private</div>
+          <div class="scf-visibility-desc">Only you can view this card</div>
+        </label>
+      </div>
+      <input type="hidden" id="scfVisibility" value="public">
+    </div>
+
+    <!-- Documents -->
+    <div class="scf-field-group" style="margin-top: 1.5rem;">
+      <label class="scf-label">Documents <span class="optional">(optional, up to 5)</span></label>
+      <div id="scfDocZone" class="scf-upload-zone" style="padding: 1.5rem;">
+        <div class="scf-upload-icon">Doc</div>
+        <p class="scf-upload-text"><strong>Click to upload</strong> or drag and drop</p>
+        <p class="scf-upload-text">PDF, DOC, DOCX, XLS, PPT up to 25MB each</p>
+      </div>
+      <input type="file" id="scfDocInput" accept=".pdf,.doc,.docx,.txt,.rtf,.xls,.xlsx,.ppt,.pptx" multiple style="display: none;">
+      <div id="scfDocProgress" class="scf-progress">
+        <div id="scfDocProgressBar" class="scf-progress-bar"></div>
+      </div>
+      <div id="scfDocList" class="scf-doc-list"></div>
+    </div>
+
+    <!-- Terms Agreement -->
+    <div class="scf-field-group" style="margin-top: 1.5rem;">
+      <div class="scf-checkbox-wrap">
+        <input type="checkbox" id="scfAgreeTerms">
+        <label for="scfAgreeTerms">I agree to the <a href="/privacy" target="_blank">Privacy Policy</a> and <a href="/terms" target="_blank">Terms of Use</a></label>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="scf-field-group" style="margin-top: 2rem;">
+      <button type="button" id="scfSubmit" class="scf-submit-btn" onclick="SCF.submit()">Create Card</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========== UPLOADCARE WIDGET ========== -->
+<script>
+if (typeof uploadcare === 'undefined') {
+  var script = document.createElement('script');
+  script.src = 'https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js';
+  script.async = true;
+  document.head.appendChild(script);
+}
+</script>
+
+<script type="module">
+// TipTap ES Module imports
+import { Editor } from 'https://esm.sh/@tiptap/core@2.1.13';
+import StarterKit from 'https://esm.sh/@tiptap/starter-kit@2.1.13';
+import Underline from 'https://esm.sh/@tiptap/extension-underline@2.1.13';
+import Image from 'https://esm.sh/@tiptap/extension-image@2.1.13';
+import Link from 'https://esm.sh/@tiptap/extension-link@2.1.13';
+
+const CONFIG = {
+  API_URL: 'https://xerb-qpd6-hd8t.n7.xano.io/api:pIN2vLYu',
+  UPLOADCARE_KEY: 'b3ab69f1399f85fd8f43',
+  WHITELIST: [
+    'usc-story.netlify.app',
+    'story-profile.netlify.app',
+    'ga4-ucp-11ty.netlify.app',
+    'usc-profiles.webflow.io',
+    'card-creation.webflow.io',
+    'localhost',
+    '127.0.0.1',
+    'webflow.io',
+    'usc.edu'
+  ],
+  ALLOW_SUBDOMAINS: true,
+  MAX_FILE_SIZE: 10 * 1024 * 1024,
+  TARGET_COMPRESSED_SIZE: 800 * 1024,
+  MAX_IMAGE_DIMENSION: 2000,
+  COMPRESSION_QUALITY: 0.85
+};
+
+function checkSecurity() {
+  const hostname = window.location.hostname.toLowerCase();
+  for (const domain of CONFIG.WHITELIST) {
+    const d = domain.toLowerCase();
+    if (hostname === d) return true;
+    if (CONFIG.ALLOW_SUBDOMAINS && hostname.endsWith('.' + d)) return true;
+    if (d === 'webflow.io' && hostname.endsWith('.webflow.io')) return true;
+  }
+  return false;
+}
+
+const state = {
+  type: 'story',
+  editor: null,
+  payIdx: 1,
+  imageData: null,
+  authorPhoto: null,
+  isAuthorized: false,
+  categoryTags: [],
+  documents: []
+};
+
+function init() {
+  if (!checkSecurity()) {
+    const blockedEl = document.getElementById('scfBlocked');
+    const containerEl = document.getElementById('scfContainer');
+    if (blockedEl) blockedEl.style.display = 'block';
+    if (containerEl) containerEl.style.display = 'none';
+    return;
+  }
+  state.isAuthorized = true;
+  const containerEl = document.getElementById('scfContainer');
+  if (containerEl) containerEl.style.display = 'block';
+  setupTypeButtons();
+  setupFileUpload();
+  setupDocUpload();
+  setupPreviews();
+  setupAuthorPhotoUpload();
+  setupTagInput();
+  initEditor();
+}
+
+function setupTypeButtons() {
+  document.querySelectorAll('.scf-type-btn').forEach(btn => {
+    btn.onclick = function() {
+      document.querySelectorAll('.scf-type-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.scf-panel').forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+      state.type = this.dataset.type;
+      const panel = document.getElementById('panel-' + state.type);
+      if (panel) panel.classList.add('active');
+      if (state.type === 'tuition') {
+        setVisibility('private');
+      }
+    };
+  });
+}
+
+function setVisibility(value, el) {
+  document.getElementById('scfVisibility').value = value;
+  document.querySelectorAll('.scf-visibility-option').forEach(opt => {
+    opt.classList.remove('active');
+  });
+  if (el) el.classList.add('active');
+  else {
+    const radio = document.querySelector(`input[name="visibility"][value="${value}"]`);
+    if (radio) radio.closest('.scf-visibility-option').classList.add('active');
+  }
+}
+
+function setupFileUpload() {
+  const zone = document.getElementById('scfUploadZone');
+  const fileInput = document.getElementById('scfFileInput');
+  if (!zone || !fileInput) return;
+  zone.onclick = e => { if (e.target.tagName !== 'BUTTON') fileInput.click(); };
+  fileInput.onchange = e => { if (e.target.files?.[0]) handleFile(e.target.files[0]); };
+  zone.ondragover = e => { e.preventDefault(); zone.classList.add('dragover'); };
+  zone.ondragleave = () => zone.classList.remove('dragover');
+  zone.ondrop = e => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0]);
+  };
+}
+
+function setupDocUpload() {
+  const zone = document.getElementById('scfDocZone');
+  const fileInput = document.getElementById('scfDocInput');
+  if (!zone || !fileInput) return;
+  zone.onclick = e => { if (e.target.tagName !== 'BUTTON') fileInput.click(); };
+  fileInput.onchange = e => {
+    if (e.target.files?.length > 0) {
+      Array.from(e.target.files).forEach(file => handleDocFile(file));
+      fileInput.value = '';
+    }
+  };
+  zone.ondragover = e => { e.preventDefault(); zone.classList.add('dragover'); };
+  zone.ondragleave = () => zone.classList.remove('dragover');
+  zone.ondrop = e => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    if (e.dataTransfer.files?.length > 0) {
+      Array.from(e.dataTransfer.files).forEach(file => handleDocFile(file));
+    }
+  };
+}
+
+function handleDocFile(file) {
+  const maxSize = 25 * 1024 * 1024;
+  const allowedTypes = ['.pdf', '.doc', '.docx', '.txt', '.rtf', '.xls', '.xlsx', '.ppt', '.pptx'];
+  const ext = '.' + file.name.split('.').pop().toLowerCase();
+  if (!allowedTypes.includes(ext)) { msg('error', 'Invalid file type'); return; }
+  if (file.size > maxSize) { msg('error', 'Document must be under 25MB'); return; }
+  if (state.documents.length >= 5) { msg('error', 'Maximum 5 documents allowed'); return; }
+
+  const progress = document.getElementById('scfDocProgress');
+  const progressBar = document.getElementById('scfDocProgressBar');
+  if (progress) progress.style.display = 'block';
+  if (progressBar) progressBar.style.width = '30%';
+
+  const reader = new FileReader();
+  reader.onprogress = e => {
+    if (e.lengthComputable && progressBar) progressBar.style.width = Math.round((e.loaded / e.total) * 70) + 30 + '%';
+  };
+  reader.onload = e => {
+    if (progressBar) progressBar.style.width = '100%';
+    state.documents.push({ name: file.name, size: file.size, type: ext, base64: e.target.result });
+    renderDocList();
+    setTimeout(() => { if (progress) progress.style.display = 'none'; if (progressBar) progressBar.style.width = '0%'; }, 300);
+  };
+  reader.onerror = () => { msg('error', 'Failed to read document'); if (progress) progress.style.display = 'none'; };
+  reader.readAsDataURL(file);
+}
+
+function renderDocList() {
+  const list = document.getElementById('scfDocList');
+  if (!list) return;
+  list.innerHTML = '';
+  state.documents.forEach((doc, idx) => {
+    const item = document.createElement('div');
+    item.className = 'scf-doc-item';
+    item.innerHTML = `<div class="scf-doc-icon">${doc.type.replace('.', '').toUpperCase()}</div>
+      <div class="scf-doc-info"><div class="scf-doc-name">${doc.name}</div><div class="scf-doc-size">${formatBytes(doc.size)}</div></div>
+      <button type="button" class="scf-doc-remove" data-idx="${idx}">x</button>`;
+    list.appendChild(item);
+  });
+  list.querySelectorAll('.scf-doc-remove').forEach(btn => {
+    btn.onclick = () => removeDoc(parseInt(btn.dataset.idx));
+  });
+}
+
+function removeDoc(idx) { state.documents.splice(idx, 1); renderDocList(); }
+
+function setupPreviews() {
+  const ytInput = document.getElementById('scfYoutubeUrl');
+  const musicInput = document.getElementById('scfMusicUrl');
+  if (ytInput) {
+    ytInput.oninput = debounce(e => {
+      const id = extractYT(e.target.value);
+      const p = document.getElementById('scfYoutubePreview');
+      if (p) p.innerHTML = id ? `<iframe src="https://www.youtube.com/embed/${id}" width="100%" height="200" frameborder="0" allowfullscreen></iframe>` : 'Paste a YouTube URL to see preview';
+    }, 400);
+  }
+  if (musicInput) {
+    musicInput.oninput = debounce(e => {
+      const platformEl = document.getElementById('scfMusicPlatform');
+      const url = buildMusicEmbed(e.target.value, platformEl?.value || 'spotify');
+      const p = document.getElementById('scfMusicPreview');
+      if (p) p.innerHTML = url ? `<iframe src="${url}" width="100%" height="152" frameborder="0" allow="encrypted-media"></iframe>` : 'Paste a music URL to see preview';
+    }, 400);
+  }
+}
+
+function handleFile(file) {
+  if (!file.type.startsWith('image/')) { msg('error', 'Please select an image file'); return; }
+  if (file.size > CONFIG.MAX_FILE_SIZE) { msg('error', 'Image must be under 10MB'); return; }
+  const originalSize = file.size;
+  showProgress(10);
+  if (file.size <= CONFIG.TARGET_COMPRESSED_SIZE) { readFileAsBase64(file, originalSize, originalSize); return; }
+  compressImage(file, originalSize);
+}
+
+function compressImage(file, originalSize) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    showProgress(30);
+    const img = new window.Image();
+    img.onload = () => {
+      showProgress(50);
+      let width = img.width, height = img.height;
+      const maxDim = CONFIG.MAX_IMAGE_DIMENSION;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) { height = Math.round(height * (maxDim / width)); width = maxDim; }
+        else { width = Math.round(width * (maxDim / height)); height = maxDim; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      showProgress(70);
+      let quality = CONFIG.COMPRESSION_QUALITY;
+      let base64 = canvas.toDataURL('image/jpeg', quality);
+      while (base64.length > CONFIG.TARGET_COMPRESSED_SIZE * 1.37 && quality > 0.3) {
+        quality -= 0.1;
+        base64 = canvas.toDataURL('image/jpeg', quality);
+      }
+      showProgress(90);
+      const compressedSize = Math.round(base64.length * 0.73);
+      state.imageData = { base64, url: base64, originalSize, compressedSize };
+      showImagePreview(base64);
+      showCompressInfo(originalSize, compressedSize);
+      showProgress(100);
+      setTimeout(hideProgress, 500);
+    };
+    img.onerror = () => { msg('error', 'Failed to process image'); hideProgress(); };
+    img.src = e.target.result;
+  };
+  reader.onerror = () => { msg('error', 'Failed to read file'); hideProgress(); };
+  reader.readAsDataURL(file);
+}
+
+function readFileAsBase64(file, originalSize, compressedSize) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    showProgress(80);
+    state.imageData = { base64: e.target.result, url: e.target.result, originalSize, compressedSize };
+    showImagePreview(e.target.result);
+    showProgress(100);
+    setTimeout(hideProgress, 500);
+  };
+  reader.readAsDataURL(file);
+}
+
+function showProgress(p) {
+  const progressEl = document.getElementById('scfProgress');
+  const barEl = document.getElementById('scfProgressBar');
+  if (progressEl) progressEl.classList.add('visible');
+  if (barEl) barEl.style.width = p + '%';
+}
+
+function hideProgress() {
+  const progressEl = document.getElementById('scfProgress');
+  const barEl = document.getElementById('scfProgressBar');
+  if (progressEl) progressEl.classList.remove('visible');
+  if (barEl) barEl.style.width = '0%';
+}
+
+function showCompressInfo(o, c) {
+  const info = document.getElementById('scfCompressInfo');
+  const pct = Math.round((1 - c / o) * 100);
+  if (info) {
+    if (pct > 5) { info.innerHTML = `Compressed: ${formatBytes(o)} to ${formatBytes(c)} (${pct}% smaller)`; info.classList.add('visible'); }
+    else { info.classList.remove('visible'); }
+  }
+}
+
+function formatBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
+  return (b / 1024 / 1024).toFixed(1) + ' MB';
+}
+
+function showImagePreview(src) {
+  const preview = document.getElementById('scfImagePreview');
+  const zone = document.getElementById('scfUploadZone');
+  if (preview) preview.src = src;
+  if (zone) zone.classList.add('has-image');
+}
+
+function toggleUrlInput() {
+  const el = document.getElementById('scfUrlInput');
+  if (el) {
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) document.getElementById('scfImageUrl')?.focus();
+  }
+}
+
+function previewUrl() {
+  const urlEl = document.getElementById('scfImageUrl');
+  const url = urlEl?.value.trim() || '';
+  if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+    state.imageData = { url };
+    showImagePreview(url);
+    document.getElementById('scfCompressInfo')?.classList.remove('visible');
+  }
+}
+
+function changeImage() { document.getElementById('scfFileInput')?.click(); }
+
+function removeImage() {
+  state.imageData = null;
+  document.getElementById('scfUploadZone')?.classList.remove('has-image');
+  const preview = document.getElementById('scfImagePreview'); if (preview) preview.src = '';
+  const fileInput = document.getElementById('scfFileInput'); if (fileInput) fileInput.value = '';
+  const urlInput = document.getElementById('scfImageUrl'); if (urlInput) urlInput.value = '';
+  document.getElementById('scfCompressInfo')?.classList.remove('visible');
+}
+
+function initEditor() {
+  const loadingEl = document.querySelector('.tiptap-loading');
+  if (loadingEl) loadingEl.remove();
+
+  const editorEl = document.getElementById('scfEditor') || document.getElementById('tiptap-editor-content');
+  if (!editorEl) { console.error('Editor element not found'); return; }
+
+  const extensions = [
+    StarterKit.configure({ heading: { levels: [1, 2, 3, 4, 5, 6] } }),
+    Underline,
+    Image.configure({ inline: false, allowBase64: true }),
+    Link.configure({ openOnClick: false })
+  ];
+
+  state.editor = new Editor({
+    element: editorEl,
+    extensions,
+    content: '<p>Write your story here...</p>',
+    editorProps: {
+      attributes: {
+        class: 'ProseMirror',
+        style: 'outline: none; min-height: 10rem;'
+      }
+    }
+  });
+
+  console.log('TipTap editor initialized');
+  window.tiptapEditor = state.editor;
+
+  const toolbar = document.getElementById('scfToolbar') || document.getElementById('tiptap-toolbar');
+  if (!toolbar) return;
+
+  const actions = {
+    bold: () => state.editor.chain().focus().toggleBold().run(),
+    italic: () => state.editor.chain().focus().toggleItalic().run(),
+    underline: () => state.editor.chain().focus().toggleUnderline().run(),
+    strike: () => state.editor.chain().focus().toggleStrike().run(),
+    paragraph: () => state.editor.chain().focus().setParagraph().run(),
+    h1: () => state.editor.chain().focus().toggleHeading({ level: 1 }).run(),
+    h2: () => state.editor.chain().focus().toggleHeading({ level: 2 }).run(),
+    h3: () => state.editor.chain().focus().toggleHeading({ level: 3 }).run(),
+    h4: () => state.editor.chain().focus().toggleHeading({ level: 4 }).run(),
+    h5: () => state.editor.chain().focus().toggleHeading({ level: 5 }).run(),
+    h6: () => state.editor.chain().focus().toggleHeading({ level: 6 }).run(),
+    bulletList: () => state.editor.chain().focus().toggleBulletList().run(),
+    orderedList: () => state.editor.chain().focus().toggleOrderedList().run(),
+    blockquote: () => state.editor.chain().focus().toggleBlockquote().run(),
+    codeBlock: () => state.editor.chain().focus().toggleCodeBlock().run(),
+    link: () => { const url = prompt('Enter URL:'); if (url) state.editor.chain().focus().setLink({ href: url }).run(); },
+    image: handleEditorImageUpload,
+    upload: handleEditorImageUpload
+  };
+
+  function handleEditorImageUpload() {
+    if (!state.editor) return;
+    if (typeof uploadcare !== 'undefined') {
+      const dialog = uploadcare.openDialog(null, {
+        publicKey: CONFIG.UPLOADCARE_KEY,
+        imagesOnly: true,
+        tabs: 'file url camera dropbox gdrive instagram',
+        multiple: false,
+        previewStep: true,
+        imageShrink: '2000x2000'
+      });
+      dialog.done((file) => {
+        file.promise().done((fileInfo) => {
+          console.log('Uploadcare image inserted:', fileInfo.cdnUrl);
+          state.editor.chain().focus().setImage({
+            src: fileInfo.cdnUrl,
+            alt: fileInfo.name || 'Image'
+          }).run();
+        });
+      });
+    } else {
+      const url = prompt('Enter image URL:');
+      if (url) {
+        state.editor.chain().focus().setImage({ src: url }).run();
+      }
+    }
+  }
+
+  const isActive = {
+    bold: () => state.editor.isActive('bold'),
+    italic: () => state.editor.isActive('italic'),
+    underline: () => state.editor.isActive('underline'),
+    strike: () => state.editor.isActive('strike'),
+    paragraph: () => state.editor.isActive('paragraph'),
+    h1: () => state.editor.isActive('heading', { level: 1 }),
+    h2: () => state.editor.isActive('heading', { level: 2 }),
+    h3: () => state.editor.isActive('heading', { level: 3 }),
+    h4: () => state.editor.isActive('heading', { level: 4 }),
+    h5: () => state.editor.isActive('heading', { level: 5 }),
+    h6: () => state.editor.isActive('heading', { level: 6 }),
+    bulletList: () => state.editor.isActive('bulletList'),
+    orderedList: () => state.editor.isActive('orderedList'),
+    blockquote: () => state.editor.isActive('blockquote'),
+    codeBlock: () => state.editor.isActive('codeBlock'),
+    link: () => state.editor.isActive('link'),
+    image: () => false,
+    upload: () => false
+  };
+
+  toolbar.querySelectorAll('button[data-action]').forEach(btn => {
+    const action = btn.dataset.action;
+    if (actions[action]) btn.onclick = e => { e.preventDefault(); actions[action](); updateToolbar(); };
+  });
+
+  state.editor.on('selectionUpdate', updateToolbar);
+  state.editor.on('transaction', updateToolbar);
+
+  state.editor.on('update', () => {
+    const bodyHtml = document.getElementById('body_html');
+    const bodyText = document.getElementById('body_text');
+    if (bodyHtml) bodyHtml.value = state.editor.getHTML();
+    if (bodyText) bodyText.value = state.editor.getText();
+  });
+
+  function updateToolbar() {
+    toolbar.querySelectorAll('button[data-action]').forEach(btn => {
+      const a = btn.dataset.action;
+      if (isActive[a]) btn.classList.toggle('is-active', isActive[a]());
+    });
+  }
+}
+
+function setupTagInput() {
+  const input = document.getElementById('scfCategoryInput');
+  const suggestions = document.getElementById('scfCategorySuggestions');
+  if (!input || !suggestions) return;
+
+  input.addEventListener('focus', () => suggestions.classList.add('visible'));
+  input.addEventListener('blur', () => setTimeout(() => suggestions.classList.remove('visible'), 200));
+  input.addEventListener('input', () => {
+    const val = input.value.toLowerCase();
+    suggestions.querySelectorAll('.scf-tag-suggestion').forEach(s => {
+      s.style.display = s.textContent.toLowerCase().includes(val) ? 'block' : 'none';
+    });
+    suggestions.classList.add('visible');
+  });
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = input.value.trim();
+      if (val) { addCategoryTag(val.toLowerCase().replace(/\s+/g, '_'), val); input.value = ''; suggestions.classList.remove('visible'); }
+    }
+  });
+
+  suggestions.querySelectorAll('.scf-tag-suggestion').forEach(s => {
+    s.addEventListener('click', () => { addCategoryTag(s.dataset.value, s.textContent); input.value = ''; suggestions.classList.remove('visible'); });
+  });
+}
+
+function addCategoryTag(value, label) {
+  if (state.categoryTags.find(t => t.value === value)) return;
+  state.categoryTags.push({ value, label });
+  renderCategoryTags();
+}
+
+function removeCategoryTag(value) {
+  state.categoryTags = state.categoryTags.filter(t => t.value !== value);
+  renderCategoryTags();
+}
+
+function renderCategoryTags() {
+  const list = document.getElementById('scfCategoryList');
+  if (!list) return;
+  list.innerHTML = '';
+  state.categoryTags.forEach(tag => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span>${tag.label}</span> <button type="button" class="scf-tag-remove" data-value="${tag.value}">x</button>`;
+    list.appendChild(li);
+  });
+  list.querySelectorAll('.scf-tag-remove').forEach(btn => { btn.onclick = () => removeCategoryTag(btn.dataset.value); });
+}
+
+function uploadAuthorPhoto() { document.getElementById('scfAuthorInput')?.click(); }
+
+function setupAuthorPhotoUpload() {
+  const input = document.getElementById('scfAuthorInput');
+  const preview = document.getElementById('scfAuthorPreview');
+  if (!input) return;
+  input.onchange = e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { msg('error', 'Please select an image file'); return; }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new window.Image();
+      img.onload = () => {
+        let width = img.width, height = img.height;
+        const maxDim = 400;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) { height = Math.round(height * (maxDim / width)); width = maxDim; }
+          else { width = Math.round(width * (maxDim / height)); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        const base64 = canvas.toDataURL('image/jpeg', 0.85);
+        state.authorPhoto = base64;
+        if (preview) { preview.src = base64; preview.classList.add('visible'); }
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+}
+
+function extractYT(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+function buildMusicEmbed(url, platform) {
+  if (!url) return null;
+  if (platform === 'spotify') { const m = url.match(/spotify\.com\/(track|playlist|album)\/([a-zA-Z0-9]+)/); return m ? `https://open.spotify.com/embed/${m[1]}/${m[2]}` : null; }
+  if (platform === 'soundcloud') return `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&auto_play=false`;
+  if (platform === 'apple_music') { const m = url.match(/music\.apple\.com\/[a-z]{2}\/(album|playlist)\/[^\/]+\/([0-9]+)/); return m ? `https://embed.music.apple.com/${m[1]}/${m[2]}` : null; }
+  return null;
+}
+
+function debounce(fn, wait) {
+  let t;
+  return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), wait); };
+}
+
+function addPay() {
+  const container = document.getElementById('scfPayments');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'scf-pay-row';
+  row.dataset.idx = state.payIdx;
+  row.innerHTML = `<input type="date" class="pay-date"><input type="number" class="pay-amount" placeholder="5000" min="0"><input type="text" class="pay-label" placeholder="Payment ${state.payIdx + 1}"><button type="button" class="scf-remove-btn" onclick="window.SCF.removePay(${state.payIdx})">x</button>`;
+  container.appendChild(row);
+  state.payIdx++;
+}
+
+function removePay(idx) {
+  const row = document.querySelector(`.scf-pay-row[data-idx="${idx}"]`);
+  if (row) row.remove();
+}
+
+function getVal(id) { return document.getElementById(id)?.value || ''; }
+
+function buildTypeData() {
+  switch (state.type) {
+    case 'story': return { content_html: state.editor ? state.editor.getHTML() : '' };
+    case 'music_playlist': return { platform: getVal('scfMusicPlatform'), original_url: getVal('scfMusicUrl'), embed_url: buildMusicEmbed(getVal('scfMusicUrl'), getVal('scfMusicPlatform') || 'spotify') };
+    case 'youtube_video': const yUrl = getVal('scfYoutubeUrl'), yId = extractYT(yUrl); return { video_id: yId, original_url: yUrl, embed_url: yId ? `https://www.youtube.com/embed/${yId}` : null, caption: getVal('scfYoutubeCaption') };
+    case 'ticket_purchase': return { event_name: getVal('scfEventName'), event_date: getVal('scfEventDate'), venue: getVal('scfEventVenue'), ticket_url: getVal('scfTicketUrl'), price_range: getVal('scfPriceRange') };
+    case 'crowdfund': return { goal_amount: parseFloat(getVal('scfGoalAmount')) || 0, allow_custom_amount: document.getElementById('scfAllowCustom')?.checked || false };
+    case 'tuition':
+      const pays = [];
+      document.querySelectorAll('#scfPayments .scf-pay-row:not(.header)').forEach(r => {
+        const d = r.querySelector('.pay-date'), a = r.querySelector('.pay-amount'), l = r.querySelector('.pay-label');
+        if (d?.value && parseFloat(a?.value) > 0) pays.push({ date: d.value, amount: parseFloat(a.value), label: l?.value || '', status: 'upcoming' });
+      });
+      return { semester: getVal('scfSemester'), institution: getVal('scfInstitution'), total_amount: parseFloat(getVal('scfTuitionTotal')) || 0, payment_schedule: pays };
+    case 'threaded_comment': return { topic: getVal('scfCommentTopic'), allow_replies: document.getElementById('scfAllowReplies')?.checked || false };
+    default: return null;
+  }
+}
+
+function msg(t, txt) {
+  const el = document.getElementById('scfMessage');
+  if (el) { el.className = 'scf-message ' + t; el.textContent = txt; el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  else { console.log(`[SCF ${t}]`, txt); }
+}
+
+function submit() {
+  if (!state.isAuthorized) { msg('error', 'Form not authorized'); return; }
+  const titleEl = document.getElementById('scfTitle');
+  const title = titleEl?.value.trim() || '';
+  if (!title) return msg('error', 'Please enter a card title');
+  const termsCheckbox = document.getElementById('scfAgreeTerms');
+  if (termsCheckbox && !termsCheckbox.checked) return msg('error', 'Please agree to the Privacy Policy and Terms of Use');
+  const data = buildTypeData();
+  if (state.type === 'youtube_video' && !data.video_id) return msg('error', 'Please enter a valid YouTube URL');
+  if (state.type === 'music_playlist' && !data.embed_url) return msg('error', 'Please enter a valid music URL');
+  if (state.type === 'ticket_purchase' && !data.event_name) return msg('error', 'Please enter an event name');
+  if (state.type === 'crowdfund' && !data.goal_amount) return msg('error', 'Please enter a funding goal');
+  if (state.type === 'crowdfund') {
+    const hasPayment = getVal('scfVenmoUsername') || getVal('scfPaypalEmail') || getVal('scfStripeLink');
+    if (!hasPayment) return msg('error', 'Please add at least one payment method');
+  }
+  if (state.type === 'threaded_comment' && !data.topic) return msg('error', 'Please enter a topic or question');
+
+  const btn = document.getElementById('scfSubmit');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="scf-loading"></span>Creating...'; }
+
+  let token = null;
+  try { token = JSON.parse(localStorage.getItem('xano_auth_token')); } catch (e) {}
+
+  const cardImages = state.imageData?.url ? [state.imageData.url] : [];
+  const payload = {
+    card_title: title,
+    description: getVal('scfDescription'),
+    card_type: state.type,
+    type_specific_data: data,
+    visibility: getVal('scfVisibility') || 'public',
+    category: state.categoryTags.map(t => t.value),
+    card_images: cardImages.length > 0 ? cardImages : null,
+    author_photo: state.authorPhoto || null,
+    cta_text: state.type === 'crowdfund' ? getVal('scfCtaText') : 'View',
+    stripe_payment_link: state.type === 'crowdfund' ? getVal('scfStripeLink') || null : null,
+    venmo_username: state.type === 'crowdfund' ? getVal('scfVenmoUsername') || null : null,
+    paypal_email: state.type === 'crowdfund' ? getVal('scfPaypalEmail') || null : null,
+    goal_amount: state.type === 'crowdfund' ? data.goal_amount : null,
+    documents: state.documents.length > 0 ? state.documents : null,
+    _origin: window.location.origin,
+    _timestamp: Date.now()
+  };
+
+  fetch(CONFIG.API_URL + '/support-cards', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (res.id || res.success) {
+      msg('success', 'Card created successfully!');
+      if (titleEl) titleEl.value = '';
+      document.getElementById('scfDescription')?.value && (document.getElementById('scfDescription').value = '');
+      removeImage();
+      state.authorPhoto = null;
+      const authorPreview = document.getElementById('scfAuthorPreview');
+      if (authorPreview) { authorPreview.src = ''; authorPreview.classList.remove('visible'); }
+      const authorInput = document.getElementById('scfAuthorInput'); if (authorInput) authorInput.value = '';
+      if (termsCheckbox) termsCheckbox.checked = false;
+      state.categoryTags = []; renderCategoryTags();
+      state.documents = []; renderDocList();
+      if (state.editor) state.editor.commands.setContent('<p>Write your story here...</p>');
+    } else { msg('error', res.message || 'Failed to create card'); }
+  })
+  .catch(() => msg('error', 'Network error. Please try again.'))
+  .finally(() => { if (btn) { btn.disabled = false; btn.textContent = 'Create Card'; } });
+}
+
+// Initialize
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+
+// Expose to window for onclick handlers
+window.SCF = {
+  toggleUrlInput,
+  previewUrl,
+  changeImage,
+  removeImage,
+  addPay,
+  removePay,
+  uploadAuthorPhoto,
+  removeDoc,
+  submit,
+  setVisibility,
+  getConfig: () => CONFIG,
+  isAuthorized: () => state.isAuthorized,
+  getEditor: () => state.editor,
+  getState: () => state
+};
+</script>

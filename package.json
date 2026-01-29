@@ -1,0 +1,20 @@
+{
+  "name": "ga4-ucp-11ty",
+  "version": "1.0.0",
+  "description": "GA4 UCP Code Reference - Built with 11ty and UIKit",
+  "scripts": {
+    "dev": "eleventy --serve",
+    "build": "eleventy",
+    "clean": "rm -rf _site"
+  },
+  "keywords": ["eleventy", "11ty", "uikit", "ga4", "ucp", "analytics"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0"
+  },
+  "dependencies": {
+    "prismjs": "^1.30.0"
+  }
+}

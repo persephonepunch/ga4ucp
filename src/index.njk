@@ -1,0 +1,141 @@
+---
+layout: base.njk
+title: Home
+description: Complete implementation guide for Google Analytics 4 with Universal Commerce Protocol integration
+---
+
+<div class="site-layout">
+  
+  <!-- Sidebar -->
+  <aside class="site-sidebar">
+    
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+      <a href="/" class="sidebar-header__logo">
+        <span uk-icon="icon: file-text; ratio: 1.5"></span>
+        <div>
+          <div>GA4 UCP</div>
+          <div class="sidebar-header__subtitle">Code Reference</div>
+        </div>
+      </a>
+    </div>
+    
+    <!-- Category Filter -->
+    <div class="sidebar-categories">
+      <button class="nav-button nav-button--active" data-category-filter="all">
+        <span uk-icon="icon: grid"></span> All Sections
+      </button>
+      {% for category in categories %}
+      <button class="nav-button" data-category-filter="{{ category.id }}">
+        <span uk-icon="icon: {{ category.icon }}"></span> {{ category.label }}
+      </button>
+      {% endfor %}
+    </div>
+    
+    <!-- Section Navigation -->
+    <nav class="sidebar-nav">
+      {% for section in codeSections %}
+      <button class="nav-button nav-button--section" data-section-id="{{ section.id }}">
+        {{ section.title }}
+      </button>
+      {% endfor %}
+    </nav>
+    
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <a href="/docs" class="btn btn--primary uk-width-1-1 uk-margin-small-bottom">
+        <span uk-icon="icon: book"></span> View Documentation
+      </a>
+      <p>Universal Commerce Protocol</p>
+      <p>BEM + UIKit Implementation</p>
+    </div>
+    
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="site-main">
+    
+    <!-- Header -->
+    <header class="site-header">
+      <h1 class="site-header__title">GA4 UCP Purchase Event Code Reference</h1>
+      <p class="site-header__description">
+        Complete implementation guide for Google Analytics 4 with Universal Commerce Protocol integration
+      </p>
+      
+      <div class="site-header__actions">
+        <a href="https://ucp.dev/" target="_blank" rel="noopener noreferrer" class="btn">
+          <span uk-icon="icon: link"></span> UCP Docs
+        </a>
+        <a href="https://getuikit.com/" target="_blank" rel="noopener noreferrer" class="btn">
+          <span uk-icon="icon: link"></span> UIkit
+        </a>
+      </div>
+      
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <span class="search-bar__icon" uk-icon="icon: search"></span>
+        <input 
+          type="text" 
+          id="search-input"
+          class="search-bar__input" 
+          placeholder="Search by title, description, tags, or code... (Press / or Ctrl+K)"
+          autocomplete="off"
+        >
+        <button id="search-clear" class="search-bar__clear" style="display: none;">
+          <span uk-icon="icon: close"></span>
+        </button>
+      </div>
+    </header>
+    
+    <!-- Content -->
+    <div class="site-content">
+      
+      <div class="content-header">
+        <h2>All Code Examples</h2>
+        <p id="results-count" class="content-header__count">{{ codeSections.length }} examples found</p>
+      </div>
+      
+      <!-- Code Sections -->
+      {% for section in codeSections %}
+      <article class="code-section" id="{{ section.id }}" data-category="{{ section.category }}">
+        
+        <header class="code-section__header">
+          <h2 class="code-section__title">{{ section.title }}</h2>
+          <p class="code-section__description">{{ section.description }}</p>
+          
+          <div class="code-section__tags">
+            {% for tag in section.tags %}
+            <span class="code-tag">{{ tag }}</span>
+            {% endfor %}
+          </div>
+        </header>
+        
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__title">{{ section.language }} - {{ section.title }}</span>
+            <button class="code-block__copy">
+              <span uk-icon="icon: copy; ratio: 0.8"></span> Copy
+            </button>
+          </div>
+          <div class="code-block__content">
+            <pre><code class="language-{{ section.language }}">{{ section.code }}</code></pre>
+          </div>
+        </div>
+        
+      </article>
+      {% endfor %}
+      
+      <!-- Empty State -->
+      <div id="empty-state" class="empty-state" style="display: none;">
+        <div class="empty-state__icon">
+          <span uk-icon="icon: file-text; ratio: 3"></span>
+        </div>
+        <h3 class="empty-state__title">No results found</h3>
+        <p>Try adjusting your search or filter criteria</p>
+      </div>
+      
+    </div>
+    
+  </main>
+  
+</div>
