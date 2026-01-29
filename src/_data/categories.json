@@ -23,5 +23,10 @@
     "id": "integration",
     "label": "Integration",
     "icon": "link"
+  },
+  {
+    "id": "serverless",
+    "label": "Serverless",
+    "icon": "cloud"
   }
 ]
